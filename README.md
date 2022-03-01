@@ -6,17 +6,17 @@ A sudoku puzzle is composed of a square 9x9 board divided into 3 rows and 3 colu
 * Each number appears only once for each row column and 3x3 box;
 * Each row, column, and 3x3 box should containg all 9 digits.
 
-The solver should take as input a matrix withwhere empty squares are represented by a standars symbol (e.g., ".", "_", or "0"), while known square should be represented by the corresponding digit (1,...,9). For example:__
+The solver should take as input a matrix withwhere empty squares are represented by a standars symbol (e.g., ".", "_", or "0"), while known square should be represented by the corresponding digit (1,...,9). For example:
 
-37. 5.. ..6__
-... 36. .12__
-... .91 75.__
-... 154 .7.__
-..3 .7. 6..__
-.5. 638 ...__
-.64 98. ...__
-59. .26 ...__
-2.. ..5 .64__
+37. 5.. ..6
+... 36. .12
+... .91 75.
+... 154 .7.
+..3 .7. 6..
+.5. 638 ...
+.64 98. ...
+59. .26 ...
+2.. ..5 .64
 
 Hints for Constraint Propagation and Backtracking:
 * Each cell should be a variable that can take values in the domain (1,...,9).
