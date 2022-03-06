@@ -6,3 +6,4 @@ if __name__ == "__main__":
     board.createRandomBoard()
     board.fillRandomBoard()
     print(board)
+    print(board.printDomain())
