@@ -1,5 +1,6 @@
 # Sudoku-Solver
 
+## Task
 Write a solver for sudoku puzzles using a constraint satisfaction approach based on constraint propagation and backtracking, and one based on Relaxation Labeling. compare the approaches, their strengths and weaknesses.
 
 A sudoku puzzle is composed of a square 9x9 board divided into 3 rows and 3 columns of smaller 3x3 boxes. The goal is to fill the board with digits from 1 to 9 such that:
@@ -30,3 +31,12 @@ Hints for Constraint Propagation and Backtracking:
 Hints for Relaxation Labeling:
 * Each cell should be an object, the values between 1 and 9 labels.
 * The compatibility rij(λ,μ) should be 1 if the assignments satisfy direct constraints, 0 otherwise.
+
+
+## Given Solution
+First of all the user can choose the difficulty of the Sudoku by typing in command line tyhe choosed one, like so:
+```bash
+python3 solver.py easy
+python3 solver.py medium
+python3 solver.py hard
+```
