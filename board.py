@@ -75,3 +75,6 @@ class SudokuBoard:
         return any(self.getCell(r, col) == value for r in range(self.dimension))
     #print("Celle uguali ciolonna ",r, col, self.getCell(r,col), value)
     
+    
+    
+    #questo funziona
