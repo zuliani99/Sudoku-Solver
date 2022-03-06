@@ -14,7 +14,7 @@ The solver should take as input a matrix withwhere empty squares are represented
 000 154 070<br/>
 003 070 600<br/>
 050 638 000<br/>
-064 98. 000<br/>
+064 980 000<br/>
 590 026 000<br/>
 200 005 064<br/>
 
