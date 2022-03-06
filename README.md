@@ -8,15 +8,15 @@ A sudoku puzzle is composed of a square 9x9 board divided into 3 rows and 3 colu
 
 The solver should take as input a matrix withwhere empty squares are represented by a standars symbol (e.g., ".", "_", or "0"), while known square should be represented by the corresponding digit (1,...,9). For example:
 
-370 500 006
-000 360 012
-000 091 750
-000 154 070
-003 070 600
-050 638 000
-064 98. 000
-590 026 000
-200 005 064
+370 500 006<br/>
+000 360 012<br/>
+000 091 750<br/>
+000 154 070<br/>
+003 070 600<br/>
+050 638 000<br/>
+064 98. 000<br/>
+590 026 000<br/>
+200 005 064<br/>
 
 Hints for Constraint Propagation and Backtracking:
 * Each cell should be a variable that can take values in the domain (1,...,9).
