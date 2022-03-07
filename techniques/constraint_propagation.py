@@ -3,13 +3,12 @@ import copy
 class ConstraintPropagation:
 
     def __init__(self, board): #ok
-        #self.cellsList = []
-        #self.dimension = dimension
-        #self.freeCell = 0
         self.cellsDomain = []
         self.board = copy.deepcopy(board)
         self.emptyDomainValue = board.dimension + 1
         self.expandedCells = 0
+        self.backwordsCells = 0
+        self.fixedCellValue = 'X'
         self.setCellsDomain()
         
     def __str__(self): #ok
@@ -18,10 +17,12 @@ class ConstraintPropagation:
             for x in row:
                 output += f'{str(x)} '
             output += "\n"
+        output += "Nodes expanded: {}\n".format(self.expandedCells)
+        output += "Nodes backword: {}\n".format(self.backwordsCells)
         return output
 
     def getDomainLength(self, list): #ok
-        return self.emptyDomainValue if not list else len(list)
+        return self.emptyDomainValue if not list or self.fixedCellValue in list else len(list)
 
     def getDomain(self, row, col): #ok
         domain = [str(i) for i in range(1, self.board.dimension + 1)]
@@ -49,12 +50,14 @@ class ConstraintPropagation:
                     domain.remove(self.board.cellsList[r][c])
 
     def setCellsDomain(self): #ok
+        remainingValues = []
+        
         for row in range(self.board.dimension):
             for col in range(self.board.dimension):
-                if self.board.cellsList[row][col] != self.board.freeCell: 
-                    empty = []
-                    self.cellsDomain.append(empty)
-                else: self.cellsDomain.append(self.getDomain(row,col))
+                if self.board.cellsList[row][col] != self.board.freeCell: remainingValues.append(self.fixedCellValue)
+                else: remainingValues.append(self.getDomain(row,col))
+        
+        self.cellsDomain = remainingValues
 
 
     def getNextMRVxy(self): #ok
@@ -65,26 +68,13 @@ class ConstraintPropagation:
         return(int(index / self.board.dimension), index % self.board.dimension)
     
 
-    """
-    Checks if a cell value assignment produces an empty domain for another cell in the same row, column, or box
-    If it does, then we know that cell assignment is not viable
-    """
     def isEmptyDomainProduced(self, row, col):
-        # Get location of the given cell in the list
         cellLocation = row * self.board.dimension + col
-
-        # Extract the cell we have just assigned a new value to
         cell = self.cellsDomain.pop(cellLocation)
-
-        # If there is an empty domain present now
         if [] in self.cellsDomain:
-            # Reinsert the given cell and return True
             self.cellsDomain.insert(cellLocation, cell)
             return True
-
-        # If no empty domain is produced
         else:
-            # Reinsert the given cell and return False
             self.cellsDomain.insert(cellLocation, cell)
             return False
 
@@ -92,9 +82,7 @@ class ConstraintPropagation:
 
     def solve(self): #ok
         location = self.getNextMRVxy()
-        if type(location) is not tuple: 
-            print("risolto")
-            return True
+        if type(location) is not tuple: return True
 
         self.expandedCells += 1
         row = location[0]
@@ -102,16 +90,14 @@ class ConstraintPropagation:
 
         for value in self.cellsDomain[row * self.board.dimension + col]:
             currentState = copy.deepcopy(self.cellsDomain)
-            self.board.cellsList[row][col] = value
-            self.getDomain(row, col)
+            self.board.cellsList[row][col] = str(value)
             
+            self.setCellsDomain()
             if self.isEmptyDomainProduced(row, col):
+                self.backwordsCells += 1
                 self.board.cellsList[row][col] = self.board.freeCell
                 self.cellsDomain = currentState
             elif self.solve(): 
-                print("risolto")
                 return True
             
         return False
-
-    #def printBoard(self): print(self.board)
