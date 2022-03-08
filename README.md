@@ -34,9 +34,3 @@ Hints for Relaxation Labeling:
 
 
 ## Given Solution
-First of all the user can choose the difficulty of the Sudoku by typing in command line tyhe choosed one, like so:
-```bash
-python3 solver.py easy
-python3 solver.py medium
-python3 solver.py hard
-```

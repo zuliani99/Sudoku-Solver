@@ -1,4 +1,5 @@
 import copy
+from time import time
 
 class ConstraintPropagation:
 
@@ -10,6 +11,7 @@ class ConstraintPropagation:
         self.backwordsCells = 0
         self.fixedCellValue = 'X'
         self.setCellsDomain()
+        self.start = time()
         
     def __str__(self): #ok
         output = ""
@@ -82,7 +84,7 @@ class ConstraintPropagation:
 
     def solve(self): #ok
         location = self.getNextMRVxy()
-        if type(location) is not tuple: return True
+        if type(location) is not tuple: return (True, time() - self.start, self.expandedCells, self.backwordsCells)
 
         self.expandedCells += 1
         row = location[0]
@@ -98,6 +100,6 @@ class ConstraintPropagation:
                 self.board.cellsList[row][col] = self.board.freeCell
                 self.cellsDomain = currentState
             elif self.solve(): 
-                return True
+                return (True, time() - self.start, self.expandedCells, self.backwordsCells)
             
-        return False
+        return (False, time() - self.start, self.expandedCells, self.backwordsCells)
