@@ -9,6 +9,7 @@ resultRL = []
 
 def solveCP(board, filename):
     cp = ConstraintPropagation(board)
+    print(filename)
     print("Initial Sudoku Board:\n" + str(board))
     solved, time, exp, back = cp.solve()
     print("Solved Sudoku Board:\n" + str(cp))
@@ -17,6 +18,7 @@ def solveCP(board, filename):
     
 def solveRL(board, filename):
     rl = RelaxationLabelling(board)
+    print(filename)
     print("Initial Sudoku Board:\n" + str(board))
     solved, time, n_iter = rl.solve()
     print("Solved Sudoku Board:\n" + str(rl))
@@ -30,12 +32,12 @@ if __name__ == "__main__":
     #hardSudoku = [f for f in listdir("./examples/hard") if isfile(join("./examples/hard", f))]
 
     print("EASY SUDOKU")
-    for easy in easySudoku: 
+    for easy in sorted(easySudoku): 
         solveCP(SudokuBoard(f"./examples/easy/{easy}".format()), easy.split(".")[0])
         #solveRL(SudokuBoard(f"./examples/easy/{easy}".format()), easy.split(".")[0])
 
     print("\nNORMAL SUDOKU")
-    for normal in normalSudoku: 
+    for normal in sorted(normalSudoku): 
         solveCP(SudokuBoard(f"./examples/normal/{normal}".format()), normal.split(".")[0])
         #solveRL(SudokuBoard(f"./examples/normal/{normal}".format()), normal.split(".")[0])
 

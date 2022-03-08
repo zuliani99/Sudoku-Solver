@@ -10,8 +10,9 @@ class ConstraintPropagation:
         self.expandedCells = 0
         self.backwordsCells = 0
         self.fixedCellValue = 'X'
-        self.setCellsDomain()
         self.start = time()
+        self.setCellsDomain()
+        
         
     def __str__(self): #ok
         output = ""
@@ -67,7 +68,7 @@ class ConstraintPropagation:
         minimum = min(cellsDomainMap)
         if minimum == self.emptyDomainValue: return -1
         index = cellsDomainMap.index(minimum)
-        return(int(index / self.board.dimension), index % self.board.dimension)
+        return(int(index / self.board.dimension), index % self.board.dimension)    
     
 
     def isEmptyDomainProduced(self, row, col):
@@ -81,9 +82,9 @@ class ConstraintPropagation:
             return False
 
 
-
     def solve(self): #ok
         location = self.getNextMRVxy()
+        print(type(location))
         if type(location) is not tuple: return (True, time() - self.start, self.expandedCells, self.backwordsCells)
 
         self.expandedCells += 1
@@ -95,6 +96,7 @@ class ConstraintPropagation:
             self.board.cellsList[row][col] = str(value)
             
             self.setCellsDomain()
+            print(value, "empty", self.isEmptyDomainProduced(row, col))
             if self.isEmptyDomainProduced(row, col):
                 self.backwordsCells += 1
                 self.board.cellsList[row][col] = self.board.freeCell
