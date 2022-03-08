@@ -17,15 +17,15 @@ def solveCP(board):
 
 if __name__ == "__main__":
     easySudoku = listdir("./examples/easy")
-    #normalSudoku = listdir("./examples/normal")
+    normalSudoku = listdir("./examples/normal")
     #mediumSudoku = [f for f in listdir("./examples/medium") if isfile(join("./examples/medium", f))]
     #hardSudoku = [f for f in listdir("./examples/hard") if isfile(join("./examples/hard", f))]
     
     print("EASY SUDOKU")
     for easy in easySudoku: solveCP(SudokuBoard(("./examples/easy/" + easy).format()))
         
-    #print("\nNORMAL SUDOKU")
-    #for normal in normalSudoku: solveCP(SudokuBoard((("./examples/normal/" + normal).format())))
+    print("\nNORMAL SUDOKU")
+    for normal in normalSudoku: solveCP(SudokuBoard((("./examples/normal/" + normal).format())))
         
     '''for medium in mediumSudoku:
         board = SudokuBoard(medium)
