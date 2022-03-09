@@ -12,14 +12,4 @@ def print_board(mat):
             if j == 8:
                 print(str(mat[i][j]))
             else:
-                print(str(mat[i][j]) + " ", end="")
-                
-                
-def readFile(filename): # retrun numpy array 9x9
-    board = np.zeros([9, 9], dtype=int)
-    with open(filename) as f:
-        for row, line in enumerate(f):
-            for col, i in enumerate(line.split(" ")):
-                board[row][col] = i
-            
-    return board
+                print(str(SBoard[i][j]) + " ", end="")

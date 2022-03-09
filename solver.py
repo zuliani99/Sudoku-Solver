@@ -2,13 +2,18 @@ from techniques.constraint_propagation import ConstraintPropagation
 #from techniques.relaxation_labelling import RelaxationLabelling
 from os import listdir
 import pandas as pd
-from utils import print_board, readFile
+from utils import print_board
 from time import time
 
 resultCP = []
 resultRL = []
 
-
+def readFile(filename):
+    board = []
+    with open(filename) as f:
+        text = f.readlines()
+        board = [list(x.strip()) for x in text]
+    return board
 
 def solveCP(filename):
     board = readFile(filename) # retrun np.array matrix 9x9
@@ -19,7 +24,7 @@ def solveCP(filename):
     start = time()
     board, solved, exp, back = cp.solve()
     end = time()
-    print("\nFinal Sudoku Board:")
+    print("\nSolved Sudoku Board:")
     print_board(board)
     print(f"\nBoard was solved: {solved} in time {str(end - start)} with {exp} expanded nodes and {back} backword nodes\n\n")
     resultCP.append([filename.split("/")[3], str(end - start), exp, back, solved])
@@ -38,7 +43,7 @@ if __name__ == "__main__":
     normalSudoku = listdir("./examples/normal")
     #mediumSudoku = [f for f in listdir("./examples/medium") if isfile(join("./examples/medium", f))]
     #hardSudoku = [f for f in listdir("./examples/hard") if isfile(join("./examples/hard", f))]
-    
+
     print("EASY SUDOKU")
     for easy in sorted(easySudoku): 
         solveCP(f"./examples/easy/{easy}".format())
