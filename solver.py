@@ -1,29 +1,42 @@
-from board import SudokuBoard
 from techniques.constraint_propagation import ConstraintPropagation
-from techniques.relaxation_labelling import RelaxationLabelling
+#from techniques.relaxation_labelling import RelaxationLabelling
 from os import listdir
 import pandas as pd
+from utils import print_board
+from time import time
 
 resultCP = []
 resultRL = []
 
-def solveCP(board, filename):
+def readFile(filename):
+    board = []
+    with open(filename) as f:
+        text = f.readlines()
+        board = [list(x.strip()) for x in text]
+    return board
+
+def solveCP(filename):
+    board = readFile(filename)
     cp = ConstraintPropagation(board)
     print(filename)
-    print("Initial Sudoku Board:\n" + str(board))
-    solved, time, exp, back = cp.solve()
-    print("Solved Sudoku Board:\n" + str(cp))
-    print(f"Board was solved: {solved} in time {str(time)} with {exp} expanded nodes and {back} backword nodes\n\n")
-    resultCP.append([filename, time, exp, back, solved])
+    print("Initial Sudoku Board:")
+    print_board(board)
+    start = time()
+    board, solved, exp, back = cp.solve()
+    end = time()
+    print("\nSolved Sudoku Board:")
+    print_board(board)
+    print(f"\nBoard was solved: {solved} in time {str(end - start)} with {exp} expanded nodes and {back} backword nodes\n\n")
+    resultCP.append([filename.split("/")[3], str(end - start), exp, back, solved])
     
-def solveRL(board, filename):
+'''def solveRL(board, filename):
     rl = RelaxationLabelling(board)
     print(filename)
-    print("Initial Sudoku Board:\n" + str(board))
+    print("Initial Sudoku Board:\n")
     solved, time, n_iter = rl.solve()
     print("Solved Sudoku Board:\n" + str(rl))
     print(f"Board was solved: {solved} in time {str(time)} with {n_iter} iterations\n\n")
-    resultRL.append([filename, n_iter, solved])
+    resultRL.append([filename, n_iter, solved])'''
 
 if __name__ == "__main__":
     easySudoku = listdir("./examples/easy")
@@ -33,12 +46,12 @@ if __name__ == "__main__":
 
     print("EASY SUDOKU")
     for easy in sorted(easySudoku): 
-        solveCP(SudokuBoard(f"./examples/easy/{easy}".format()), easy.split(".")[0])
+        solveCP(f"./examples/easy/{easy}".format())
         #solveRL(SudokuBoard(f"./examples/easy/{easy}".format()), easy.split(".")[0])
 
     print("\nNORMAL SUDOKU")
     for normal in sorted(normalSudoku): 
-        solveCP(SudokuBoard(f"./examples/normal/{normal}".format()), normal.split(".")[0])
+        solveCP(f"./examples/normal/{normal}".format())
         #solveRL(SudokuBoard(f"./examples/normal/{normal}".format()), normal.split(".")[0])
 
     '''
