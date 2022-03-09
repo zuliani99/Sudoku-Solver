@@ -11,3 +11,11 @@ def print_board(SBoard):
                 print(SBoard[i][j])
             else:
                 print(str(SBoard[i][j]) + " ", end="")
+                
+                
+def readFile(filename):
+    board = []
+    with open(filename) as f:
+        text = f.readlines()
+        board = [list(x.strip()) for x in text]
+    return board
