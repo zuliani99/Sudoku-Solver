@@ -11,7 +11,7 @@ resultRL = []
 
 
 def solveCP(filename):
-    board = readFile(filename)
+    board = readFile(filename) # retrun np.array matrix 9x9
     cp = ConstraintPropagation(board)
     print(filename)
     print("Initial Sudoku Board:")
