@@ -2,18 +2,13 @@ from techniques.constraint_propagation import ConstraintPropagation
 #from techniques.relaxation_labelling import RelaxationLabelling
 from os import listdir
 import pandas as pd
-from utils import print_board
+from utils import print_board, readFile
 from time import time
 
 resultCP = []
 resultRL = []
 
-def readFile(filename):
-    board = []
-    with open(filename) as f:
-        text = f.readlines()
-        board = [list(x.strip()) for x in text]
-    return board
+
 
 def solveCP(filename):
     board = readFile(filename) # retrun np.array matrix 9x9

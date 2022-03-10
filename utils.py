@@ -1,5 +1,3 @@
-import numpy as np
-
 def print_board(mat):
     for i in range(len(mat)):
         if i % 3 == 0 and i != 0:
@@ -12,4 +10,11 @@ def print_board(mat):
             if j == 8:
                 print(str(mat[i][j]))
             else:
-                print(str(SBoard[i][j]) + " ", end="")
+                print(str(mat[i][j]) + " ", end="")
+                
+def readFile(filename):
+    board = []
+    with open(filename) as f:
+        text = f.readlines()
+        board = [list(map(int, x.strip())) for x in text]
+    return board
