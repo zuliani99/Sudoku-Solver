@@ -13,6 +13,7 @@ def print_board(mat):
                 print(str(mat[i][j]) + " ", end="")
                 
 def readFile(filename):
+    #print(filename)
     board = []
     with open(filename) as f:
         text = f.readlines()

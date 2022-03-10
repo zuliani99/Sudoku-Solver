@@ -1,94 +1,90 @@
 import copy
+DIMENSION = 9
+FREECELL = 0
+EMPTYDOMAINVALUECELL = 10
+FIXEDCELLVALUE = None
+            
+def getDomainLength(list): #ok
+        return EMPTYDOMAINVALUECELL if not list or FIXEDCELLVALUE in list else len(list)
 
-class ConstraintPropagation:
-
-    def __init__(self, board): #ok
-        self.cellsDomain = []
-        self.board = board
-        self.dimension = 9 #ok
-        self.emptyDomainValue = self.dimension + 1 #ok
-        self.expandedCells = 0
-        self.backwordsCells = 0
-        self.fixedCellValue = None #ok
-        self.freeCell = 0 #ok
-        self.setCellsDomain()
-        
-        
-    def getDomainLength(self, list): #ok
-        return self.emptyDomainValue if not list or self.fixedCellValue in list else len(list)
-
-    def getDomain(self, row, col): #ok
-        domain = [int(i) for i in range(1, self.dimension + 1)]
-        self.domainRow(row, domain)
-        self.domainCol(col, domain)
-        self.domainBox(row, col, domain)
+def getDomain(row, col, board): #ok
+        domain = [int(i) for i in range(1, DIMENSION + 1)]
+        domainRow(row, domain, board)
+        domainCol(col, domain, board)
+        domainBox(row, col, domain, board)
         return domain
     
-    def domainRow(self, row, domain): #ok
-        for c in range(self.dimension):
-            if self.board[row][c] != self.freeCell:
-                if self.board[row][c] in domain:
-                    domain.remove(self.board[row][c])
+def domainRow(row, domain, board): #ok
+        for c in range(DIMENSION):
+            if board[row][c] != FREECELL:
+                if board[row][c] in domain:
+                    domain.remove(board[row][c])
         
-    def domainCol(self, col, domain): #ok
-        for row in range(self.dimension):
-            if self.board[row][col] != self.freeCell:
-                if self.board[row][col] in domain:
-                    domain.remove(self.board[row][col])
+def domainCol(col, domain, board): #ok
+        for row in range(DIMENSION):
+            if board[row][col] != FREECELL:
+                if board[row][col] in domain:
+                    domain.remove(board[row][col])
 
-    def domainBox(self, row, col, domain): #ok
+def domainBox(row, col, domain, board): #ok
         for r in range(int(row/3)*3, int(row/3)*3+3):
             for c in range(int(col/3)*3, int(col/3)*3+3):
-                if self.board[r][c] in domain:
-                    domain.remove(self.board[r][c])
+                if board[r][c] in domain:
+                    domain.remove(board[r][c])
 
-    def setCellsDomain(self): #ok
+def setCellsDomain(board): #ok
         newDomain = []
         
-        for row in range(self.dimension):
-            for col in range(self.dimension):
-                if self.board[row][col] != self.freeCell: newDomain.append([self.fixedCellValue])
-                else: newDomain.append(self.getDomain(row,col))
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
+                if board[row][col] != FREECELL: newDomain.append([FIXEDCELLVALUE])
+                else: newDomain.append(getDomain(row,col, board))
         
-        self.cellsDomain = newDomain
+        return newDomain
 
-
-    def getNextMRVxy(self): #ok
-        cellsDomainMap = list(map(self.getDomainLength, self.cellsDomain))
+def getNextMRVxy(domain): #ok
+        cellsDomainMap = list(map(getDomainLength, domain))
         minimum = min(cellsDomainMap)
-        if minimum == self.emptyDomainValue: return -1
+        if minimum == EMPTYDOMAINVALUECELL: return None
         index = cellsDomainMap.index(minimum)
-        return(index // self.dimension, index % self.dimension)    
+        return(int(index / DIMENSION), index % DIMENSION)    
     
 
-    def isEmptyDomainProduced(self, row, col):
-        cellLocation = row * self.dimension + col
-        cell = self.cellsDomain.pop(cellLocation)
-        if [] in self.cellsDomain:
-            self.cellsDomain.insert(cellLocation, cell)
-            return True
-        else:
-            self.cellsDomain.insert(cellLocation, cell)
-            return False
+def isEmptyDomainProduced(row, col, domain):
+        cellLocation = row * DIMENSION + col
+        cell = domain.pop(cellLocation)
+        flag = [] in domain
+        domain.insert(cellLocation, cell)
+        return flag
 
+def solving(domain, board, exp, back):
+        location = getNextMRVxy(domain)
+        #print(location)
+        if location is None: return (board, True, exp, back)
 
-    def solve(self):
-        location = self.getNextMRVxy()
-        if type(location) is not tuple: return (self.board, True, self.expandedCells, self.backwordsCells)
-
-        self.expandedCells += 1
         row, col = location
+        #if actualDomain is None:
+        for val in domain[row * DIMENSION + col]:
+            #self.solve(row, col, copy.deepcopy(domain))
+            exp += 1
 
-        for value in self.cellsDomain[row * self.dimension + col]:
-            currentState = copy.deepcopy(self.cellsDomain)
-            self.board[row][col] = value
+            currentDomain = copy.deepcopy(domain)
+            newBoard = copy.deepcopy(board)
+            newBoard[row][col] = val
+            newDomain = setCellsDomain(newBoard)
             
-            self.setCellsDomain()
-            if self.isEmptyDomainProduced(row, col):
-                self.board[row][col] = self.freeCell
-                self.cellsDomain = currentState
-                self.backwordsCells += 1
-            elif self.solve()[1]: 
-                return (self.board, True, self.expandedCells, self.backwordsCells)
+            if isEmptyDomainProduced(row, col, newDomain):
+                print("sonos")
+                newBoard[row][col] = FREECELL
+                domain = currentDomain
+                 
+            elif solving(newDomain, newBoard, exp, back + 1)[1]:
+                return (board, True, exp, back)
             
-        return (self.board, False, self.expandedCells, self.backwordsCells)
+            
+            #return self.solving(currentDomain, newBoard)
+        return (board, False, exp, back) 
+    
+def solve(board): 
+    print("ok")
+    return solving(setCellsDomain(board), board, 0, 0)
