@@ -13,9 +13,17 @@ def print_board(mat):
                 print(str(mat[i][j]) + " ", end="")
                 
 def readFile(filename):
-    #print(filename)
     board = []
     with open(filename) as f:
         text = f.readlines()
         board = [list(map(int, x.strip())) for x in text]
     return board
+
+def writeFile(filename, board):
+    f = open(f"./results/cp_solved_boards/{filename}", "w+")
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            if j == 8:
+                f.write(str(board[i][j]) + "\n")
+            else:
+                f.write(str(board[i][j]))
