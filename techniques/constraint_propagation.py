@@ -3,7 +3,8 @@ DIMENSION = 9
 FREECELLVALUE = 0
 EMPTYDOMAINVALUE = 10
 
-def getDomainCells(bo): #ok
+
+def getDomainCells(bo):
         newDomain = []
         for row in range(DIMENSION):
             for col in range(DIMENSION):
@@ -11,28 +12,33 @@ def getDomainCells(bo): #ok
                 else: newDomain.append(getDomain(row,col, bo))
         return newDomain
     
-def getDomain(row, col, board): #ok
+    
+def getDomain(row, col, board):
         domain = [int(i) for i in range(1, DIMENSION + 1)]
         domainRow(row, domain, board)
         domainCol(col, domain, board)
         domainBox(row, col, domain, board)
         return domain
     
-def domainRow(row, domain, board): #ok
+    
+def domainRow(row, domain, board):
         for c in range(DIMENSION):
                 if board[row][c] in domain:
                     domain.remove(board[row][c])
         
-def domainCol(col, domain, board): #ok
+        
+def domainCol(col, domain, board):
         for row in range(DIMENSION):
                 if board[row][col] in domain:
                     domain.remove(board[row][col])
 
-def domainBox(row, col, domain, board): #ok
+
+def domainBox(row, col, domain, board):
         for r in range(int(row/3)*3, int(row/3)*3+3):
             for c in range(int(col/3)*3, int(col/3)*3+3):
                     if board[r][c] in domain:
                         domain.remove(board[r][c])
+                
                 
 def getLenghtDomain(domain):
     return EMPTYDOMAINVALUE if not domain or None in domain else len(domain)
@@ -45,6 +51,7 @@ def getNextMinimumDomain(domain):
     index = listMapDomain.index(minimumFirstList)
     return(int(index / DIMENSION), index % DIMENSION)
     
+    
 def checkValidAssign(bo, row, col, val):
     bo[row][col] = val
     return [] not in getDomainCells(bo)
@@ -56,22 +63,11 @@ def solve(bo, exp, back):
     if(location is None): return (True, bo, exp, back)
     row, col = location
     for val in domain[row * DIMENSION + col]:
-        #print(val, row, col)
         if checkValidAssign(copy.deepcopy(bo), row, col, val):
             exp += 1
             bo[row][col] = val
-            #print("\n")
-            #print_board(bo)
-            #print("\n")
-            #print("assegnato ", val, row, col)
             solved, board, expanded, backword = solve(bo, exp, back)
-            if(solved):
-                #print("finito")
-                #print_board(bo)
-                #print("inner",exp, back)
-                return (True, board, exp + expanded, back + backword)
-        #print("alt")
+            if(solved): return (True, board, exp + expanded, back + backword)
         back += 1
-        #print("outer" ,exp, back)
         bo[row][col] = 0
     return (False, bo, exp, back)
