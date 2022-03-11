@@ -1,5 +1,4 @@
-#from techniques.constraint_propagation import solve
-from constraint_prop2 import solve
+from techniques.constraint_propagation import solve
 from techniques.relaxation_labelling import RelaxationLabelling
 from os import listdir
 import pandas as pd
