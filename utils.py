@@ -19,8 +19,8 @@ def readFile(filename):
         board = [list(map(int, x.strip())) for x in text]
     return board
 
-def writeFile(filename, board):
-    f = open(f"./results/cp_solved_boards/{filename}", "w+")
+def writeFile(technique, filename, board):
+    f = open(f"./results/{technique}/{filename}", "w+")
     for i in range(len(board)):
         for j in range(len(board[0])):
             if j == 8:

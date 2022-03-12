@@ -1,8 +1,8 @@
-from techniques.constraint_propagation import solve
-from techniques.relaxation_labelling import RelaxationLabelling
+from techniques.constraint_propagation import solveConstraintPropagation
+from techniques.relaxation_labelling import solveRelaxationLabeling
 from os import listdir
 import pandas as pd
-from utils import print_board, readFile, writeFile
+from utils import readFile, writeFile
 from time import time
 
 #https://printablecreative.com/sudoku-generator
@@ -22,30 +22,31 @@ def solveCP(filename):
     #print("Initial Sudoku Board:")
     #print_board(board)
     start = time()
-    solved, board, exp, back = solve(board, 0, 0)
+    solved, board, exp, back = solveConstraintPropagation(board, 0, 0)
     end = time()
     #print("\nSolved Sudoku Board:")
     #print_board(board)
     #print(f"Board was solved: {solved} in time {str(end - start)} with {exp} expanded nodes and {back} backword nodes\n")
     resultCP.append([filename.split("/")[3], str(end - start), exp, back, solved])
-    writeFile(filename.split("/")[3], board)
+    writeFile("cp_solved_boards", filename.split("/")[3], board)
     
     
-def solveRL(board, filename):
+def solveRL(filename):
     board = readFile(filename) # retrun np.array matrix 9x9
-    rl = RelaxationLabelling(board)
-    print(filename)
-    print("Initial Sudoku Board:")
-    print_board(board)
-    solved, time, n_iter = rl.solve()
-    print("\nSolved Sudoku Board:")
-    print_board(board)
-    print(f"Board was solved: {solved} in time {str(time)} with {n_iter} iterations\n\n")
+    print(f"Solving: {filename}")
+    #print(filename)
+    #print("Initial Sudoku Board:")
+    #print_board(board)
+    solved, n_iter = solveRelaxationLabeling(board)
+    #print("\nSolved Sudoku Board:")
+    #print_board(board)
+    #print(f"Board was solved: {solved} in time {str(time)} with {n_iter} iterations\n\n")
     resultRL.append([filename, n_iter, solved])
+    writeFile("rl_solved_boards", filename.split("/")[3], board)
 
 def solveSudoku(filename):
     solveCP(filename)
-    #solveRL(filename)
+    solveRL(filename)
 
 if __name__ == "__main__":
 
@@ -66,10 +67,10 @@ if __name__ == "__main__":
     df_resultCP = pd.DataFrame(resultCP, columns=["Filename", "Execution_Time", "Expanded_Nodes", "Backward_Nodes", "Solved"])
     print(df_resultCP.to_string(index=False))
 
-    #print("\n\nRESULTS FOR RELAXATION LABELLING")
-    #df_resultRL = pd.DataFrame(resultRL, columns=["Filename", "NUmber_of_Iteration", "Solved"])
-    #print(df_resultRL.to_string(index=False))
+    print("\n\nRESULTS FOR RELAXATION LABELLING")
+    df_resultRL = pd.DataFrame(resultRL, columns=["Filename", "NUmber_of_Iteration", "Solved"])
+    print(df_resultRL.to_string(index=False))
 
     df_resultCP.to_csv("./results/cp_result.csv", index=False)
-    #df_resultRL.to_csv("./results/rl_result.csv", index=False)
+    df_resultRL.to_csv("./results/rl_result.csv", index=False)
     

@@ -57,7 +57,7 @@ def checkValidAssign(bo, row, col, val):
     return [] not in getDomainCells(bo)
     
     
-def solve(bo, exp, back):
+def solveConstraintPropagation(bo, exp, back):
     domain = getDomainCells(bo)    
     location = getNextMinimumDomain(domain)
     if(location is None): return (True, bo, exp, back)
@@ -66,7 +66,7 @@ def solve(bo, exp, back):
         if checkValidAssign(copy.deepcopy(bo), row, col, val):
             exp += 1
             bo[row][col] = val
-            solved, board, expanded, backword = solve(bo, exp, back)
+            solved, board, expanded, backword = solveConstraintPropagation(bo, exp, back)
             if(solved): return (True, board, exp + expanded, back + backword)
         back += 1
         bo[row][col] = 0
