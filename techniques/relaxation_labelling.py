@@ -12,10 +12,8 @@ def defineProbabilities(dom):
 
 def defineDistributions(domains):
     distributions = []
-    for i in range(DIMENSION):
-        distributions.extend(
-            defineProbabilities(domains[i * 9 + j]) for j in range(DIMENSION)
-        )
+    for row in range(DIMENSION):
+        distributions.extend(defineProbabilities(domains[row * 9 + col]) for col in range(DIMENSION))
     return distributions
     
     
@@ -60,17 +58,17 @@ def computeQ(probDist, obj, lLabel):
             for uLabel in range(DIMENSION):
                 sum += compatibility(obj, (row, colObj), lLabel, uLabel + 1) * probDist[row * 9 + colObj][uLabel]
 
-    for row in range(int(rowObj / 3) * 3, int(rowObj / 3) * 3 + 3):
-        for col in range(int(colObj / 3) * 3, int(colObj / 3) * 3 + 3):
+    for row in range((rowObj // 3) * 3, (rowObj // 3) * 3 + 3):
+        for col in range((colObj // 3) * 3, (colObj // 3) * 3 + 3):
             if (row, col) != obj:
                 for uLabel in range(DIMENSION):
-                    sum += compatibility(obj, (row, col), lLabel, uLabel)+1 * probDist[row * 9 + col][uLabel]
+                    sum += compatibility(obj, (row, col), lLabel, uLabel + 1) * probDist[row * 9 + col][uLabel]
     return sum
 
 
-def chooseBestFittableValue(matrix, probDist): #ok
-    for row in range(9):
-        for col in range(9):
+def chooseBestFittableValue(matrix, probDist):
+    for row in range(DIMENSION):
+        for col in range(DIMENSION):
             matrix[row][col] = probDist[row * 9 + col].index(max(probDist[row * 9 + col]))+1
     return matrix
 
