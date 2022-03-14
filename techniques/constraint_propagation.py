@@ -1,5 +1,5 @@
 import copy
-from ..utils import DIMENSION, getDomainCells
+from .utils import DIMENSION, getDomainCells
 
 EMPTYDOMAINVALUE = 10
                 

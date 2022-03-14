@@ -1,117 +1,104 @@
 import numpy as np
-import time
+from .utils import DIMENSION, getDomainCells
 import copy
-from ..utils import DIMENSION, getDomainCells
+
 
 Rij = np.zeros((81, 9))
 
 
-def define_probabilities(dom):
-    list = []
-    for i in range(1, 10):
-        if i in dom:
-            list.append(1/len(dom))
-        else:
-            list.append(0)
-    return list
+def defineProbabilities(dom):
+    return [1/len(dom) if num+1 in dom else 0 for num in range(DIMENSION)]
 
 
-def define_distributions(domains):
+def defineDistributions(domains):
     distributions = []
-    for i in range(9):
-        distributions.extend(define_probabilities(domains[i*9 + j]) for j in range(9))
+    for i in range(DIMENSION):
+        distributions.extend(
+            defineProbabilities(domains[i * 9 + j]) for j in range(DIMENSION)
+        )
     return distributions
-
-
-def compatibility(i, j, lb, mu):
-    if i == j:
-        return 0
-    if lb != mu:
-        return 1
-    if valid(i, j) == 0:
-        return 0
+    
+    
+def compatibility(i, j, lb, mu): #ok
+    if i == j: return 0
+    if lb != mu: return 1
+    if sameRow(i, j) or sameCol(i, j) or sameBox(i, j): return 0
     return 1
 
-
-def valid(obj1, obj2):
-    if obj1[0] == obj2[0] or obj1[1] == obj2[1]:
-        return 0
-
-    if (obj1[1] // 3) == (obj2[1] // 3) and (obj1[0] // 3) == (obj2[0] // 3):
-        return 0
-    return 1
+def sameRow(i, j): return i[0] == j[0]
+def sameCol(i, j): return i[1] == j[1]
+def sameBox(i, j): return (i[1] // 3) == (j[1] // 3) and (i[0] // 3) == (j[0] // 3)
 
 
-def compute_all_q(p):
-    for i in range(9):
-        for j in range(9):
-            for u in range(1, 10):
-                qu[i*9 + j][u-1] = q(p, (i, j), u)
+def computeAllQ(probDist):
+    for row in range(DIMENSION):
+        for col in range(DIMENSION):
+            for uLabel in range(DIMENSION):
+                Rij[row * 9 + col][uLabel] = computeQ(probDist, (row, col), uLabel+1)
 
 
-def compute_all_p(p):
-    for i in range(9):
-        for j in range(9):
-            somma = sum(np.multiply(p[i * 9 + j], qu[i * 9 + j]))
-            for u in range(1, 10):
-                p[i*9+j][u-1] = p[i*9+j][u-1]*qu[i*9+j][u-1]/somma
+def computeAllP(probDist):
+    for row in range(DIMENSION):
+        for col in range(DIMENSION):
+            s = sum(np.multiply(probDist[row * 9 + col], Rij[row * 9 + col]))
+            for uLabel in range(DIMENSION):
+                probDist[row * 9 + col][uLabel] = (
+                    (probDist[row * 9 + col][uLabel] * Rij[row * 9 + col][uLabel]) / s
+                )
 
 
-def q(p, obj, l):
+def computeQ(probDist, obj, lLabel):
     sum = 0
+    rowObj, colObj = obj
+    for col in range(DIMENSION):
+        if colObj != col:
+            for uLabel in range(DIMENSION):
+                sum += compatibility(obj, (rowObj, col), lLabel, uLabel + 1) * probDist[rowObj * 9 + col][uLabel]
 
-    #row
-    for i in range(9):
-        if obj[1] != i:
-            for u in range(1, 10):
-                sum += compatibility(obj, (obj[0], i), l, u) * p[obj[0]*9 + i][u-1]
+    for row in range(DIMENSION):
+        if rowObj != row:
+            for uLabel in range(DIMENSION):
+                sum += compatibility(obj, (row, colObj), lLabel, uLabel + 1) * probDist[row * 9 + colObj][uLabel]
 
-    #column
-    for i in range(9):
-        if obj[0] != i:
-            for u in range(1, 10):
-                sum += compatibility(obj, (i, obj[1]), l, u) * p[i * 9 + obj[1]][u-1]
-
-    #box
-    box_x = obj[1] // 3
-    box_y = obj[0] // 3
-
-    for i in range(box_y * 3, box_y * 3 + 3):
-        for j in range(box_x * 3, box_x * 3 + 3):
-            if (i, j) != obj:
-                for u in range(1, 10):
-                    sum += compatibility(obj, (i, j), l, u) * p[i*9 + j][u-1]
+    for row in range(int(rowObj / 3) * 3, int(rowObj / 3) * 3 + 3):
+        for col in range(int(colObj / 3) * 3, int(colObj / 3) * 3 + 3):
+            if (row, col) != obj:
+                for uLabel in range(DIMENSION):
+                    sum += compatibility(obj, (row, col), lLabel, uLabel)+1 * probDist[row * 9 + col][uLabel]
     return sum
 
 
-def choose_values(matrix, p):
-    for i in range(9):
-        for j in range(9):
-            matrix[i][j] = p[i*9+j].index(max(p[i*9+j]))+1
+def chooseBestFittableValue(matrix, probDist): #ok
+    for row in range(9):
+        for col in range(9):
+            matrix[row][col] = probDist[row * 9 + col].index(max(probDist[row * 9 + col]))+1
     return matrix
 
 
-def compute_distance_euclidean(p, old_p):
+def euclideanDistance(p, old_p):
     return np.linalg.norm(np.array(old_p).ravel()-np.array(p).ravel())
 
 
+def averageConsistency(probDist):
+    return np.sum(probDist * Rij)
+
+
 def solveRelaxationLabeling(matrix):
-    p = getDomainCells(matrix)
-    start = time.time()
+    domain = getDomainCells(matrix)
+    probDist = defineDistributions(domain)
     diff = 1
     iterations = 0
-    old_p = copy.deepcopy(p)
+    
+    oldProb = copy.deepcopy(probDist)
     while diff > 0.001:
-        compute_all_q(p)
-        compute_all_p(p)
-        diff = compute_distance_euclidean(p, old_p)
-        old_p = copy.deepcopy(p)
+        computeAllQ(probDist)
+        computeAllP(probDist)
+        
+        diff = euclideanDistance(probDist, oldProb)
+        #avg = averageConsistency(probDist)
+        oldProb = copy.deepcopy(probDist)
+        #diff = avg - prev
         iterations += 1
         print("Actual difference : ", diff)
-
-    print("---------FINAL BOARD----------")
-    print(choose_values(matrix, p))
-    print('\n')
-    print('\n')
-    print("---------REPORT----------")
-    print("TIME IN SECONDS %s :" % (time.time() - start), "NUMBER OF ITERATIONS :", iterations)
+        
+    return chooseBestFittableValue(matrix, probDist), iterations
