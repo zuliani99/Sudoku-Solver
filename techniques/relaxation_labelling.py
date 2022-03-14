@@ -75,12 +75,8 @@ def chooseBestFittableValue(matrix, probDist): #ok
     return matrix
 
 
-def euclideanDistance(p, old_p):
-    return np.linalg.norm(np.array(old_p).ravel()-np.array(p).ravel())
-
-
-def averageConsistency(probDist):
-    return np.sum(probDist * Rij)
+def euclideanDistance(prodDist, oldProb):
+    return np.linalg.norm(np.array(oldProb).ravel()-np.array(prodDist).ravel())
 
 
 def solveRelaxationLabeling(matrix):
@@ -95,9 +91,7 @@ def solveRelaxationLabeling(matrix):
         computeAllP(probDist)
         
         diff = euclideanDistance(probDist, oldProb)
-        #avg = averageConsistency(probDist)
         oldProb = copy.deepcopy(probDist)
-        #diff = avg - prev
         iterations += 1
         print("Actual difference : ", diff)
         
