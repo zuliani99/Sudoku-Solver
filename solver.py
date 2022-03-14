@@ -37,12 +37,13 @@ def solveRL(filename):
     #print(filename)
     #print("Initial Sudoku Board:")
     #print_board(board)
-    solved, n_iter = solveRelaxationLabeling(board)
+    #solved, n_iter = solveRelaxationLabeling(board)
+    #solveRelaxationLabeling(board)
     #print("\nSolved Sudoku Board:")
     #print_board(board)
     #print(f"Board was solved: {solved} in time {str(time)} with {n_iter} iterations\n\n")
-    resultRL.append([filename, n_iter, solved])
-    writeFile("rl_solved_boards", filename.split("/")[3], board)
+    #resultRL.append([filename, n_iter, solved])
+    #writeFile("rl_solved_boards", filename.split("/")[3], board)
 
 def solveSudoku(filename):
     solveCP(filename)
