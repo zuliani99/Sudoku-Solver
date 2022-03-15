@@ -1,9 +1,8 @@
 from techniques.constraint_propagation import solveConstraintPropagation
 from techniques.relaxation_labelling import solveRelaxationLabeling
-#from previous_rl import solveRelaxationLabeling
 from os import listdir
 import pandas as pd
-from techniques.utils import getDomainCells, readFile, writeFile
+from techniques.utils import checkSolution, readFile, writeFile
 from time import time
 
 #https://printablecreative.com/sudoku-generator
@@ -11,7 +10,6 @@ from time import time
 
 resultCP = []
 resultRL = []
-boadCP = []
 
 easySudoku = listdir("./examples/easy")
 normalSudoku = listdir("./examples/normal")
@@ -20,13 +18,12 @@ hardSudoku = listdir("./examples/hard")
 
 
 def solveCP(filename):
-    global boardCP
     board = readFile(filename)
     print(f"Constraint Propagation - Solving: {filename}")
     start = time()
     solved, board, exp, back = solveConstraintPropagation(board, 0, 0)
-    boardCP = board
     end = time()
+    #print(solved, checkSolution(board))
     resultCP.append([filename.split("/")[3], str(end - start), exp, back, solved])
     writeFile("cp_solved_boards", filename.split("/")[3], board)
     
@@ -37,7 +34,7 @@ def solveRL(filename):
     start = time()
     board, n_iter = solveRelaxationLabeling(board)
     end = time()
-    resultRL.append([filename, str(end - start), n_iter, board == boardCP])
+    resultRL.append([filename, str(end - start), n_iter, checkSolution(board)])
     writeFile("rl_solved_boards", filename.split("/")[3], board)
 
 
@@ -49,7 +46,6 @@ def solveSudoku(filename):
 if __name__ == "__main__":
 
     print("EASY SUDOKU")
-    #solveSudoku("./examples/easy/easy1.txt".format())
     for easy in sorted(easySudoku): solveSudoku(f"./examples/easy/{easy}".format())    
 
     print("\nNORMAL SUDOKU")

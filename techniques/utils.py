@@ -1,11 +1,44 @@
 DIMENSION = 9
 FREECELLVALUE = 0
 
+def checkSolution(board):
+    for row in range(DIMENSION):
+        for col in range(DIMENSION):
+            if(notValidRow(row, board[row][col], board) or
+                notValidCol(col, board[row][col], board) or
+                notValidBox(row, col, board[row][col], board)):
+                return False
+    return True
+
+def notValidRow(row, value, board):
+    c = 0
+    for col in range(DIMENSION):
+        if board[row][col] == value:
+            c+=1
+            if c > 1: return True
+    return False
+
+def notValidCol(col, value, board):
+    c = 0
+    for row in range(DIMENSION):
+        if board[row][col] == value:
+            c+=1
+            if c > 1: return True
+    return False
+
+def notValidBox(row, col, value, board):
+    f = 0
+    for r in range((row // 3) * 3, (row // 3) * 3 + 3):
+        for c in range((col // 3) * 3, (col // 3) * 3 + 3):
+            if board[r][c] == value:
+                f+=1
+                if f > 1: return True
+    return False
+
 def getDomainCells(bo):
         newDomain = []
         for row in range(DIMENSION):
             for col in range(DIMENSION):
-                #if bo[row][col] != FREECELLVALUE: newDomain.append([None]) 
                 if bo[row][col] != FREECELLVALUE: newDomain.append([bo[row][col]])
                 else: newDomain.append(getDomain(row,col, bo))
         return newDomain

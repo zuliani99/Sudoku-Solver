@@ -91,6 +91,6 @@ def solveRelaxationLabeling(matrix):
         diff = euclideanDistance(probDist, oldProb)
         oldProb = copy.deepcopy(probDist)
         iterations += 1
-        print("Actual difference : ", diff)
+        #print("Actual difference : ", diff)
         
     return chooseBestFittableValue(matrix, probDist), iterations
