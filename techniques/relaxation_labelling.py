@@ -5,7 +5,7 @@ import copy
 
 
 # We define the matrix of compatibility coefficients
-Rij = np.zeros((81, 9))
+allQ = np.zeros((81, 9))
 
 
 # Function to define the probability list depends on the lenth of the cell's domain
@@ -38,17 +38,17 @@ def computeAllQ(probDist):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
             for uLabel in range(DIMENSION):
-                Rij[row * 9 + col][uLabel] = computeQ(probDist, (row, col), uLabel+1)
+                allQ[row * 9 + col][uLabel] = computeQ(probDist, (row, col), uLabel+1)
 
 
 # Funtion to update the propability distribution list 
 def computeAllP(probDist):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
-            s = sum(np.multiply(probDist[row * 9 + col], Rij[row * 9 + col]))
+            s = sum(np.multiply(probDist[row * 9 + col], allQ[row * 9 + col]))
             for uLabel in range(DIMENSION):
                 probDist[row * 9 + col][uLabel] = (
-                    (probDist[row * 9 + col][uLabel] * Rij[row * 9 + col][uLabel]) / s
+                    (probDist[row * 9 + col][uLabel] * allQ[row * 9 + col][uLabel]) / s
                 )
 
 

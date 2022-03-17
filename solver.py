@@ -1,4 +1,6 @@
 # Usefull Import
+from cmath import e
+import sys
 from techniques.constraint_propagation import solveConstraintPropagation
 from techniques.relaxation_labelling import solveRelaxationLabeling
 from os import listdir
@@ -25,9 +27,14 @@ hardSudoku = listdir("./examples/hard")
 def solveCP(filename):
     board = readFile(filename)
     print(f"Constraint Propagation - Solving: {filename}")
-    start = time()
-    solved, board, exp, back = solveConstraintPropagation(board, 0, 0)
-    end = time()
+    try:
+        start = time()
+        solved, board, exp, back = solveConstraintPropagation(board, 0, 0)
+        end = time()
+    except Exception as e:
+        print(f"Exception appear: {e}")
+        return
+    print("DONE\n")
     resultCP.append([filename.split("/")[3], str(end - start), exp, back, solved]) # Information that we store for each sudoku after computation
     writeFile("cp_solved_boards", filename.split("/")[3], board)
     
@@ -36,9 +43,14 @@ def solveCP(filename):
 def solveRL(filename):
     board = readFile(filename)
     print(f"Relaxation Labelling - Solving: {filename}")
-    start = time()
-    board, n_iter = solveRelaxationLabeling(board)
-    end = time()
+    try:
+        start = time()
+        board, n_iter = solveRelaxationLabeling(board)
+        end = time()
+    except Exception as e:
+        print(f"Exception appear: {e}")
+        return
+    print("DONE\n")
     resultRL.append([filename, str(end - start), n_iter, checkSolution(board)]) # Information that we store for each sudoku after computation
     writeFile("rl_solved_boards", filename.split("/")[3], board) 
 
@@ -49,16 +61,16 @@ def solveSudoku(filename):
 
 
 if __name__ == "__main__":
-    print("EASY SUDOKU")
+    print("EASY SUDOKU:")
     for easy in sorted(easySudoku): solveSudoku(f"./examples/easy/{easy}".format())    
 
-    print("\nNORMAL SUDOKU")
+    print("\n\nNORMAL SUDOKU:")
     for normal in sorted(normalSudoku): solveSudoku(f"./examples/normal/{normal}".format())
 
-    print("\nMEDIUM SUDOKU")
+    print("\n\nMEDIUM SUDOKU:")
     for medium in sorted(mediumSudoku): solveSudoku(f"./examples/medium/{medium}".format())
         
-    print("\nHARD SUDOKU")
+    print("\n\nHARD SUDOKU:")
     for hard in sorted(hardSudoku): solveSudoku(f"./examples/hard/{hard}".format())
        
     print("\n\nRESULTS FOR CONSTRAINT PROPAGATION")

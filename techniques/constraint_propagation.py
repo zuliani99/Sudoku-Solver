@@ -45,10 +45,9 @@ def solveConstraintPropagation(bo, exp, back):
     if(location is None): return (True, bo, exp, back)
     row, col = location
     for val in domain[row * DIMENSION + col]:
-        if checkValidAssign(copy.deepcopy(bo), row, col, val):
-            exp += 1
+        if checkValidAssign(copy.deepcopy(bo), row, col, val):            
             bo[row][col] = val
-            solved, board, expanded, backword = solveConstraintPropagation(bo, exp, back)
+            solved, board, expanded, backword = solveConstraintPropagation(bo, exp+1, back)
             if(solved): return (True, board, exp + expanded, back + backword)
         back += 1
         bo[row][col] = 0
