@@ -1,6 +1,9 @@
+# Useful constant
 DIMENSION = 9
 FREECELLVALUE = 0
 
+
+# Function to check the correctness of the final solution of Relaxation Labelling Technique
 def checkSolution(board):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
@@ -35,6 +38,8 @@ def notValidBox(row, col, value, board):
                 if f > 1: return True
     return False
 
+
+# FUnction to retreive the possible values domain of each cells
 def getDomainCells(bo):
         newDomain = []
         for row in range(DIMENSION):
@@ -44,6 +49,7 @@ def getDomainCells(bo):
         return newDomain
     
     
+# Function to get the list of possible values domain for a specific cell
 def getDomain(row, col, board):
         domain = [int(i) for i in range(1, DIMENSION + 1)]
         domainRow(row, domain, board)
@@ -51,25 +57,21 @@ def getDomain(row, col, board):
         domainBox(row, col, domain, board)
         return domain
     
-    
 def domainRow(row, domain, board):
-        for c in range(DIMENSION):
-                if board[row][c] in domain:
-                    domain.remove(board[row][c])
-        
+    for c in range(DIMENSION):
+        if board[row][c] in domain: domain.remove(board[row][c])
         
 def domainCol(col, domain, board):
-        for row in range(DIMENSION):
-                if board[row][col] in domain:
-                    domain.remove(board[row][col])
-
+    for row in range(DIMENSION):
+        if board[row][col] in domain: domain.remove(board[row][col])
 
 def domainBox(row, col, domain, board):
-        for r in range(int(row/3)*3, int(row/3)*3+3):
-            for c in range(int(col/3)*3, int(col/3)*3+3):
-                    if board[r][c] in domain:
-                        domain.remove(board[r][c])
+    for r in range(int(row/3)*3, int(row/3)*3+3):
+        for c in range(int(col/3)*3, int(col/3)*3+3):
+                if board[r][c] in domain: domain.remove(board[r][c])
 
+
+# Function to print the sudoku board
 def print_board(mat):
     for i in range(len(mat)):
         if i % 3 == 0 and i != 0:
@@ -83,7 +85,9 @@ def print_board(mat):
                 print(str(mat[i][j]))
             else:
                 print(str(mat[i][j]) + " ", end="")
-                
+
+
+# Function to read the sudoku board using its path file
 def readFile(filename):
     board = []
     with open(filename) as f:
@@ -91,6 +95,8 @@ def readFile(filename):
         board = [list(map(int, x.strip())) for x in text]
     return board
 
+
+# Function to store the final sudoku board
 def writeFile(technique, filename, board):
     f = open(f"./results/{technique}/{filename}", "w+")
     for i in range(len(board)):

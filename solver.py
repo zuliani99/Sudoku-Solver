@@ -1,3 +1,4 @@
+# Usefull Import
 from techniques.constraint_propagation import solveConstraintPropagation
 from techniques.relaxation_labelling import solveRelaxationLabeling
 from os import listdir
@@ -8,34 +9,38 @@ from time import time
 #https://printablecreative.com/sudoku-generator
 #solveSudoku("./examples/easy/easy1.txt".format())
 
+# List where the results will be stored
 resultCP = []
 resultRL = []
 
+
+# List of initial sudoku cofiguration for each difficulty 
 easySudoku = listdir("./examples/easy")
 normalSudoku = listdir("./examples/normal")
 mediumSudoku = listdir("./examples/medium")
 hardSudoku = listdir("./examples/hard")
 
 
+# Function to solve the sudoku board using the Constraint Propagation and Back Tracking technique
 def solveCP(filename):
     board = readFile(filename)
     print(f"Constraint Propagation - Solving: {filename}")
     start = time()
     solved, board, exp, back = solveConstraintPropagation(board, 0, 0)
     end = time()
-    #print(solved, checkSolution(board))
-    resultCP.append([filename.split("/")[3], str(end - start), exp, back, solved])
+    resultCP.append([filename.split("/")[3], str(end - start), exp, back, solved]) # Information that we store for each sudoku after computation
     writeFile("cp_solved_boards", filename.split("/")[3], board)
     
     
+# Function to solve the sudoku board using the Relaxation Labelling technique
 def solveRL(filename):
     board = readFile(filename)
     print(f"Relaxation Labelling - Solving: {filename}")
     start = time()
     board, n_iter = solveRelaxationLabeling(board)
     end = time()
-    resultRL.append([filename, str(end - start), n_iter, checkSolution(board)])
-    writeFile("rl_solved_boards", filename.split("/")[3], board)
+    resultRL.append([filename, str(end - start), n_iter, checkSolution(board)]) # Information that we store for each sudoku after computation
+    writeFile("rl_solved_boards", filename.split("/")[3], board) 
 
 
 def solveSudoku(filename):
@@ -44,7 +49,6 @@ def solveSudoku(filename):
 
 
 if __name__ == "__main__":
-
     print("EASY SUDOKU")
     for easy in sorted(easySudoku): solveSudoku(f"./examples/easy/{easy}".format())    
 

@@ -1,23 +1,28 @@
+# Useful import
 import numpy as np
 from .utils import DIMENSION, getDomainCells
 import copy
 
 
+# We define the matrix of compatibility coefficients
 Rij = np.zeros((81, 9))
 
 
+# Function to define the probability list depends on the lenth of the cell's domain
 def defineProbabilities(dom):
     return [1/len(dom) if num+1 in dom else 0 for num in range(DIMENSION)]
 
 
+# Function to define the distribution Probability of each cell depends on their domain
 def defineDistributions(domains):
     distributions = []
     for row in range(DIMENSION):
         distributions.extend(defineProbabilities(domains[row * 9 + col]) for col in range(DIMENSION))
     return distributions
     
-    
-def compatibility(i, j, lb, mu): #ok
+
+# Function to define the compatibility between cell 'i' and label 'lb' and cell 'j' and label 'mu'
+def compatibility(i, j, lb, mu):
     if i == j: return 0
     if lb != mu: return 1
     if sameRow(i, j) or sameCol(i, j) or sameBox(i, j): return 0
@@ -28,6 +33,7 @@ def sameCol(i, j): return i[1] == j[1]
 def sameBox(i, j): return (i[1] // 3) == (j[1] // 3) and (i[0] // 3) == (j[0] // 3)
 
 
+# Funtion to define th score associated to the hypothesis "b_i ia labeled with lambda ata time t"
 def computeAllQ(probDist):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
@@ -35,6 +41,7 @@ def computeAllQ(probDist):
                 Rij[row * 9 + col][uLabel] = computeQ(probDist, (row, col), uLabel+1)
 
 
+# Funtion to update the propability distribution list 
 def computeAllP(probDist):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
@@ -45,6 +52,7 @@ def computeAllP(probDist):
                 )
 
 
+# Funtion to define specific compatibility for a given object 'obj' and label 'lLabel'
 def computeQ(probDist, obj, lLabel):
     sum = 0
     rowObj, colObj = obj
@@ -66,6 +74,7 @@ def computeQ(probDist, obj, lLabel):
     return sum
 
 
+# Function to choose the best probable value of each cell 
 def chooseBestFittableValue(matrix, probDist):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
@@ -73,10 +82,12 @@ def chooseBestFittableValue(matrix, probDist):
     return matrix
 
 
+# Convergence function to know when to stop the iteration process
 def euclideanDistance(prodDist, oldProb):
     return np.linalg.norm(np.array(oldProb).ravel()-np.array(prodDist).ravel())
 
 
+# Main function to solve the sudoku board using Relaxation Labelling
 def solveRelaxationLabeling(matrix):
     domain = getDomainCells(matrix)
     probDist = defineDistributions(domain)
@@ -84,13 +95,12 @@ def solveRelaxationLabeling(matrix):
     iterations = 0
     
     oldProb = copy.deepcopy(probDist)
-    while diff > 0.001:
+    while diff > 0.001: #  0.001 is the threshold for the stopping criteria  
         computeAllQ(probDist)
         computeAllP(probDist)
         
         diff = euclideanDistance(probDist, oldProb)
         oldProb = copy.deepcopy(probDist)
         iterations += 1
-        #print("Actual difference : ", diff)
         
     return chooseBestFittableValue(matrix, probDist), iterations
