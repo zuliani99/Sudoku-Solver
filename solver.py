@@ -1,6 +1,5 @@
 # Usefull Import
 from cmath import e
-import sys
 from techniques.constraint_propagation import solveConstraintPropagation
 from techniques.relaxation_labelling import solveRelaxationLabeling
 from os import listdir
@@ -35,7 +34,7 @@ def solveCP(filename):
         print(f"Exception appear: {e}")
         return
     print("DONE\n")
-    resultCP.append([filename.split("/")[3], str(end - start), exp, back, solved]) # Information that we store for each sudoku after computation
+    resultCP.append([filename.split("/")[3], str(round((end - start), 6)), exp, back, solved]) # Information that we store for each sudoku after computation
     writeFile("cp_solved_boards", filename.split("/")[3], board)
     
     
@@ -51,7 +50,7 @@ def solveRL(filename):
         print(f"Exception appear: {e}")
         return
     print("DONE\n")
-    resultRL.append([filename, str(end - start), n_iter, checkSolution(board)]) # Information that we store for each sudoku after computation
+    resultRL.append([filename.split("/")[3], str(round((end - start), 6)), n_iter, checkSolution(board)]) # Information that we store for each sudoku after computation
     writeFile("rl_solved_boards", filename.split("/")[3], board) 
 
 
