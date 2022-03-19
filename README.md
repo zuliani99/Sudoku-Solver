@@ -31,6 +31,3 @@ Hints for Constraint Propagation and Backtracking:
 Hints for Relaxation Labeling:
 * Each cell should be an object, the values between 1 and 9 labels.
 * The compatibility rij(λ,μ) should be 1 if the assignments satisfy direct constraints, 0 otherwise.
-
-
-## Given Solution
