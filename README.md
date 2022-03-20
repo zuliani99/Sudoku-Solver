@@ -31,3 +31,12 @@ Hints for Constraint Propagation and Backtracking:
 Hints for Relaxation Labeling:
 * Each cell should be an object, the values between 1 and 9 labels.
 * The compatibility rij(λ,μ) should be 1 if the assignments satisfy direct constraints, 0 otherwise.
+
+
+## How to start the Application Bechmark
+* You need to install numpy and pandas by typing: ```
+pip3 install numpy``` and ```
+pip3 install pandas ```
+* Enter in the main directory of the project
+* Type ```python3 solver.py ```
+* After the computation the results and statistics of solved Sudoku puzzle will be stored in the *results* directory
